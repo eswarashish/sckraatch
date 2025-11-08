@@ -1,2 +1,2 @@
 # sckraatch
-Building ai stuff from scratch.
+Learning  stuff from scratch.
