@@ -1,6 +1,14 @@
 import multiprocessing as mp
 # gil i.e global interpretation lock makes one interpretter to only excute one thread at same time
 # hence multiprocessing makes to unclock multiple interpretters with each single thread
+# modern computers have multiple cores and a core can execute multiple threads
+# parallelisation can be done using multiprocessing  or 
+# multithreading ,, a process can hae multiple threads having shared resources, shhared memory space, executes concurerently
+# so a single resource requiremnt for two threads can occur hence we use locks for thread synchronisaton
+# so to gil makes only one thread to execute -> so no multithreading/ killing concurrency in threads
+# one instruction at a time
+# effects cpu-bound threads 
+
 import time
 import math
 results_a = []
