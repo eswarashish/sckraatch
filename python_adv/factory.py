@@ -23,8 +23,36 @@ class Stud(IPerson):
         print("Im a student")
 
 stud = Stud()
-Stud.person()
+# Stud.person()
 #stud.person() will make this to pass self
-stud.person
-# above would work
 
+class Student(IPerson):
+    def person(self):
+        print("Im student")
+
+class Teacher(IPerson):
+    def person(self):
+        print("Im Teacher")
+
+# the purpose of factory principle is to make sure we build instances of classes on fly like a factory
+
+class PersonFactory:
+    @staticmethod # since it need not vary based on arguments
+    def build_person(classtype: str):
+        if classtype =="Student":
+            person = Student()
+            return person
+        elif classtype == "Teacher":
+            person = Teacher()
+            return person
+        else:
+            raise TypeError("Invalid person type")
+        
+
+if __name__ =="__main__":
+    classtype = input("Enter your person type\n")
+    person = PersonFactory.build_person(classtype=classtype)
+    try:
+        person.person()
+    except Exception as e:
+        print(e)
