@@ -27,7 +27,7 @@ class Person:
         print("Static Method")
     # usage
     # Person.mymethod()
-    # p1.method() would not work since we pass self, so make sure to call as p1.mymethod// this would work
+    # p1.method() would not work since we pass self
 
 
 
