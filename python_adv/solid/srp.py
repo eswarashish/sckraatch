@@ -1,7 +1,9 @@
-# Single responsibility
-# Classes and methods must have a single responsiblity
+# Open Close
+# Software entities like classes, modules and functions should be open for extension but closed for modification
+# This means you can add new functionality without changing existing code
 
 # Item class, Order class, payment class
+
 import random
 from enum import Enum
 
@@ -41,20 +43,41 @@ class Order:
 
 class Payment:
 
-    def __init__(self,order:Order,amount:float,method:str):
+    def __init__(self,order:Order,amount:float,
+                # method:str, here if a new payment method like bitcoin or barbaric system is added then we have to change the entire code so we have to create different payment classes for different methods
+                 ):
 
         self.order = order
         self.amount= amount
-        if method == Method.online | Method.offline:
-            self.method = method
-        else:
-            raise TypeError(f"Only acceptable payment methods {Method}")
+        # if method == Method.online | Method.offline:
+        #     self.method = method
+        # else:
+        #     raise TypeError(f"Only acceptable payment methods {Method}")
 
     def process(self):
-        to_pay = self.order.order_price()
-        if self.amount>to_pay:
+
+        
+        pass
+        # if self.amount>to_pay:
+        #     return f"Purchase successful change of {self.amount-to_pay} returned"
+        # else: raise ValueError(f"{to_pay-self.amount} more to be paid")
+
+class OnlinePayment(Payment):
+    def __init__(self, order, amount):
+        super().__init__(order, amount)
+
+    def process(self):
+        """since it is an online mode exact amount will be deducted"""
+        return  f"Purchase of {self.order.order_price()} successful in online method"
+    
+class OfflinePayment(Payment):
+    def __init__(self, order, amount):
+        super().__init__(order, amount)
+    def process(self):
+         to_pay = self.order.order_price()
+         if self.amount>to_pay:
             return f"Purchase successful change of {self.amount-to_pay} returned"
-        else: raise ValueError(f"{to_pay-self.amount} more to be paid")
+         else: raise ValueError(f"{to_pay-self.amount} more to be paid")
 
 
 if __name__=='__main__':
