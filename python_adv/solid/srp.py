@@ -1,8 +1,7 @@
-# Open Close
-# Software entities like classes, modules and functions should be open for extension but closed for modification
-# This means you can add new functionality without changing existing code
-
-# Item class, Order class, payment class
+# Liskov substitution principle states that
+# Objects of subclasses should be able to replace objects of their parents classes
+# which means once subclassses objects replaced it must not break the methods of parent class
+# They must be easily seamlessly be substituted
 
 import random
 from enum import Enum
@@ -43,25 +42,12 @@ class Order:
 
 class Payment:
 
-    def __init__(self,order:Order,amount:float,
-                # method:str, here if a new payment method like bitcoin or barbaric system is added then we have to change the entire code so we have to create different payment classes for different methods
-                 ):
+    def __init__(self,order:Order,amount:float,):
 
         self.order = order
         self.amount= amount
-        # if method == Method.online | Method.offline:
-        #     self.method = method
-        # else:
-        #     raise TypeError(f"Only acceptable payment methods {Method}")
-
     def process(self):
-
-        
         pass
-        # if self.amount>to_pay:
-        #     return f"Purchase successful change of {self.amount-to_pay} returned"
-        # else: raise ValueError(f"{to_pay-self.amount} more to be paid")
-
 class OnlinePayment(Payment):
     def __init__(self, order, amount):
         super().__init__(order, amount)
@@ -79,6 +65,23 @@ class OfflinePayment(Payment):
             return f"Purchase successful change of {self.amount-to_pay} returned"
          else: raise ValueError(f"{to_pay-self.amount} more to be paid")
 
+# lets take an example of paypal processing
+
+class PaypalPayment(Payment):
+    def __init__(self, order, amount
+                 ,# since using email in other methods breaks liskov we need to take in init itself
+                 email:str
+                 ):
+        super().__init__(order, amount)
+        self.email = email
+
+    def process(self
+               # ,email:str
+                ):
+        return  f"Purchase of {self.order.order_price()} successful with paypal {self.email}" 
+        # This actually violates the liskov principle because we cannot subsitite this class' object with its parent object
+        # Parent method breaks 
+# 
 
 if __name__=='__main__':
     item_1 = Item('apple')
