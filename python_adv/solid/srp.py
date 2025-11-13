@@ -2,6 +2,11 @@
 # In the below example for online and paypal methods lets say both need a method called otp_validation
 # So this common properties makes us to segregate subclasses from the main Interface
 
+
+# We can also perform compostion via interface segregation i.e in this example instead of creating a separate OTPPayment class we can create an OTP auth class
+
+
+
 import random
 from enum import Enum
 from abc import ABC, abstractmethod
@@ -39,6 +44,14 @@ class Order:
             self.price += item.price
         return self.price
     
+class OTPAuth:
+    authorized = False
+    def verify_otp(self,code):
+        print(f"{code} verified")
+        self.authorized = True
+    
+    def is_authorised(self)->bool:
+        return self.authorized
 
 class Payment(ABC):
 
@@ -57,15 +70,17 @@ class OTPPayment(Payment):
     def otp_validation(self,otp):
         """Method for otp validation"""
         pass
+#OTP compositon
 class OnlinePayment(OTPPayment):
-    def __init__(self, order, amount,):
+    def __init__(self, order, amount,authorizer: OTPAuth):
         super().__init__(order, amount)
         self.verified = False
+        self.authorizer = authorizer
     def otp_validation(self, otp):
-        self.verified = True
+        self.authorizer.verify_otp(otp)
     def process(self):
         """since it is an online mode exact amount will be deducted"""
-        if self.verified: return  f"Purchase of {self.order.order_price()} successful in online method"
+        if self.authorizer.is_authorised(): return  f"Purchase of {self.order.order_price()} successful in online method"
         else: return f"Otp invalid"
 class OfflinePayment(Payment):
     def __init__(self, order, amount):
@@ -108,5 +123,4 @@ if __name__=='__main__':
 # So instead of one general interface more meaningful interface segregation can help to build complex systems easily
 
 
-        
     
