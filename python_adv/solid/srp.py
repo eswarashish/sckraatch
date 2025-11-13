@@ -1,10 +1,10 @@
-# Liskov substitution principle states that
-# Objects of subclasses should be able to replace objects of their parents classes
-# which means once subclassses objects replaced it must not break the methods of parent class
-# They must be easily seamlessly be substituted
+# Interface segregation principle
+# In the below example for online and paypal methods lets say both need a method called otp_validation
+# So this common properties makes us to segregate subclasses from the main Interface
 
 import random
 from enum import Enum
+from abc import ABC, abstractmethod
 
 class Method(Enum):
     online = "online"
@@ -40,22 +40,33 @@ class Order:
         return self.price
     
 
-class Payment:
+class Payment(ABC):
 
     def __init__(self,order:Order,amount:float,):
 
         self.order = order
         self.amount= amount
+    @abstractmethod
     def process(self):
+        """Implement in every subclass"""
         pass
-class OnlinePayment(Payment):
-    def __init__(self, order, amount):
-        super().__init__(order, amount)
 
+
+class OTPPayment(Payment):
+    @abstractmethod
+    def otp_validation(self,otp):
+        """Method for otp validation"""
+        pass
+class OnlinePayment(OTPPayment):
+    def __init__(self, order, amount,):
+        super().__init__(order, amount)
+        self.verified = False
+    def otp_validation(self, otp):
+        self.verified = True
     def process(self):
         """since it is an online mode exact amount will be deducted"""
-        return  f"Purchase of {self.order.order_price()} successful in online method"
-    
+        if self.verified: return  f"Purchase of {self.order.order_price()} successful in online method"
+        else: return f"Otp invalid"
 class OfflinePayment(Payment):
     def __init__(self, order, amount):
         super().__init__(order, amount)
@@ -74,11 +85,14 @@ class PaypalPayment(Payment):
                  ):
         super().__init__(order, amount)
         self.email = email
-
+        self.verified = False
+    def otp_validation(self, otp):
+        self.verified = True
     def process(self
                # ,email:str
                 ):
-        return  f"Purchase of {self.order.order_price()} successful with paypal {self.email}" 
+        if self.verified: return  f"Purchase of {self.order.order_price()} successful with paypal {self.email}" 
+        else: return f"Otp invalid"
         # This actually violates the liskov principle because we cannot subsitite this class' object with its parent object
         # Parent method breaks 
 # 
@@ -87,9 +101,11 @@ if __name__=='__main__':
     item_1 = Item('apple')
     item_2 = Item('orange')
     order = Order([item_1,item_2])
-    payment = Payment(order=order,amount=1000.0)
+    payment = PaypalPayment(order=order,amount=1000.0,email="ashish@gmail.com")
+    payment.otp_validation(3453)
     print(payment.process())
 
+# So instead of one general interface more meaningful interface segregation can help to build complex systems easily
 
 
         
